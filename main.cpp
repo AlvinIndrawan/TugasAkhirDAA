@@ -1,5 +1,5 @@
 #include <iostream>
-#include <conio.h>>
+#include <conio.h>
 
 using namespace std;
 
@@ -13,10 +13,80 @@ struct produk{
 
 produk *newData, *head=NULL, *tail=NULL, *tampil, *temp;
 
+//FUNGSI TAMBAH STOK
+int TambahStok(string cari, int stok){
+	
+	if(head == NULL){
+		cout<<"Data masih kosong";
+	}else{
+		temp = head;
+		do{
+			if(temp->nama_produk == cari || temp->id_produk == cari){
+				temp->stok_produk += stok;
+				cout<<"stok produk "<<temp->nama_produk<<" telah berhasil ditambah"<<endl;
+				cout<<"stok produk "<<temp->nama_produk<<" sekarang : "<<temp->stok_produk<<endl;
+				return 1;
+			}
+			temp = temp->next;
+		}while(temp != NULL);
+		cout<<"Nama Produk tidak ditemukan";
+	}
+	
+}
+
+//FUNGSI EDIT PRODUK
+int EditProduk(string cari, int harga){
+	
+	if(head == NULL){
+		cout<<"Data masih kosong";
+	}else{
+		temp = head;
+		do{
+			if(temp->nama_produk == cari || temp->id_produk == cari){
+				temp->harga_produk = harga;
+				cout<<"Data produk "<<temp->nama_produk<<" sudah berhasil diedit"<<endl;
+				return 1;
+			}
+			temp = temp->next;
+		}while(temp != NULL);
+		cout<<"Nama Produk tidak ditemukan";
+	}
+	
+}
+
+//NOTIFIKASI
+void Notifikasi(){
+	string nama_produk[10];
+	int stok[10];
+	int n = 0;
+	
+	if(head == NULL){
+		cout<<"Data masih kosong";
+	}else{
+		temp = head;
+		do{
+			if(temp->stok_produk < 100){
+				nama_produk[n] = temp->nama_produk;
+				stok[n] = temp->stok_produk;
+				n++;
+			}
+			temp = temp->next;
+		}while(temp != NULL);
+		
+		if(n > 0){
+			for(int i=0; i<n; i++){
+				cout<<"Stok produk "<<nama_produk[i]<<" hampir habis"<<endl;
+				cout<<"Sisa stok produk "<<nama_produk[i]<<" : "<<stok[i]<<endl<<endl;
+			}
+		}else{
+			cout<<"Kosong"<<endl;
+		}
+	}
+}
 
 int main() {
 	
-int Pilihan, Pilih;
+int pilihan, pilih;
 	Menu:
 	cout<< " ===================================================== "<<endl;
 	cout<< "                    TOKO CYAND                         "<<endl;
@@ -31,11 +101,10 @@ int Pilihan, Pilih;
 	cout<<endl;
 	
 	cout<< "     Masukkan pilihan Anda (1/2/3/4/5) : ";
-	cin>>Pilihan; 
-	if ( Pilihan == 1 ){
+	cin>>pilihan; 
+	if ( pilihan == 1 ){
 	}
-
-	if ( Pilihan == 2) {
+	else if ( pilihan == 2) {
 		
 		cout << " ------------------------------------------------ "<<endl;
 		cout << "              MENU KELOLA PRODUK                  "<<endl;
@@ -47,16 +116,15 @@ int Pilihan, Pilih;
 		cout << "    5. Tambah diskon "<<endl;
 		cout << endl;
 		cout<<"      Masukkan pilihan Anda (1/2/3/4/5) : ";
-		cin>>Pilih;
+		cin>>pilih;
 	}
-	
-	if ( Pilihan == 3 ){
+	else if ( pilihan == 3 ){
+		Notifikasi();
+	}
+	else if ( pilihan == 4 ){
 		
 	}
-	if ( Pilihan == 4 ){
-		
-	}
-	if ( Pilihan == 5 ){
+	else if ( pilihan == 5 ){
 		
 	}
 	else {
