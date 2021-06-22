@@ -86,7 +86,7 @@ void Notifikasi(){
 
 int main() {
 	
-int pilihan, pilih;
+	int pilihan, pilih;
 	Menu:
 	cout<< " ===================================================== "<<endl;
 	cout<< "                    TOKO CYAND                         "<<endl;
