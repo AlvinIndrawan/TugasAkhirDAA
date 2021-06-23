@@ -44,20 +44,7 @@ int InputProduk(){
 	newData->harga_produk = harga_produk_nilai;
 }
 
-// Fungsi Tambah Produk
-int TambahProduk(){
-	InputProduk();
-	if(head == NULL){
-		head = newData;
-		tail = newData;
-		newData->next = head;
-	}
-	else{
-		tail->next = newData;
-		tail = newData;
-		tail->next = head;
-	}
-}
+
 
 //FUNGSI TAMBAH STOK
 int TambahStok(string cari, int stok){
