@@ -1,17 +1,63 @@
 #include <iostream>
 #include <conio.h>
+#include <ctime>
 
 using namespace std;
 
 //struct untuk penggunaan linked list
 struct produk{
-	int harga_produk, stok_produk;
+	int no_produk, harga_produk, stok_produk;
 	string id_produk, nama_produk;
 	
 	produk *next;
 };
 
 produk *newData, *head=NULL, *tail=NULL, *tampil, *temp;
+
+//Fungsi Input Produk
+int InputProduk(){
+	int no_produk_nilai, harga_produk_nilai, stok_produk_nilai;
+	string id_produk_nilai, nama_produk_nilai;
+	
+	cout << "\nMasukkan Nomor Produk: ";
+	(cin >> no_produk_nilai).get();
+	
+	cout << "Masukkan Id Produk: ";
+	getline(cin, id_produk_nilai);
+	
+	cout << "Masukkan Nama Produk: ";
+	getline(cin, nama_produk_nilai);
+	
+	cout << "Masukkan Stok Produk: ";
+	(cin >> stok_produk_nilai).get();
+	
+	cout << "Masukkan Harga Produk: ";
+	(cin >> harga_produk_nilai).get();
+	
+	cout << endl;
+	cout << "Produk dengan ID " << id_produk_nilai << " telah terinput! \n";
+
+	newData = new produk;
+	newData->id_produk = id_produk_nilai;
+	newData->nama_produk = nama_produk_nilai;
+	newData->stok_produk = stok_produk_nilai;
+	newData->harga_produk = harga_produk_nilai;
+}
+
+// Fungsi Tambah Produk
+int TambahProduk(){
+	InputProduk();
+	if(head == NULL){
+		head = newData;
+		tail = newData;
+		newData->next = head;
+	}
+	else{
+		tail->next = newData;
+		tail = newData;
+		tail->next = head;
+	}
+}
 
 //FUNGSI TAMBAH STOK
 int TambahStok(string cari, int stok){
@@ -52,6 +98,45 @@ int EditProduk(string cari, int harga){
 		cout<<"Nama Produk tidak ditemukan";
 	}
 	
+}
+
+// FUNGSI TAMBAH DISKON
+int TambahDiskon () {
+	int d;
+	
+	cout<<" Pilihan tambah diskon :"<<endl;
+	cout<<" \t 1. Diskon 10 %"<<endl;
+	cout<<" \t 2. Diskon 15 %"<<endl;
+	cout<<" \t 3. Diskon 20 %"<<endl;
+	cout<<" \t 4. Diskon 30 %"<<endl;
+	cout<<" \t 5. Diskon 50 %"<<endl;
+	cout<<" Masukkan pilihan Anda (1/2/3/4/5) : ";
+	cin>>d;
+	
+	if ( d == 1)
+	{
+		
+	}
+	else if ( d == 2)
+	{
+		
+	}
+	else if ( d == 3)
+	{
+		
+	}
+	else if ( d == 4)
+	{
+		
+	}
+	else if ( d == 5)
+	{
+		
+	}
+	else 
+	{
+		cout<<" Pilihan tidak tersedia !"<<endl;
+	}
 }
 
 //NOTIFIKASI
@@ -98,7 +183,7 @@ void TampilStokProduk(){
 			cout << "\t"<<temp->id_produk<<"\t\t"<<temp->nama_produk<<"\t\t"<<temp->stok_produk<<endl;
 			cout << "------------------------------------------------------------------------------\n";
 			temp = temp->next;
-		}while(temp != NULL);
+		}while(temp != head);
 	}
    cout << endl;
 }
@@ -119,20 +204,61 @@ int CekHarga(string cari){
 }
 
 //MENGURANGI JUMLAH STOK PRODUK YANG TERSISA KARENA DIBELI
-void DiBeli(string cari, int qty){
+int DiBeli(string cari, int qty){
+	int stok;
 	temp = head;
 	do{
 		if(temp->nama_produk == cari || temp->id_produk == cari){
-			temp->stok_produk -= qty;
+		   temp->stok_produk -= qty;
+		   stok = temp->stok_produk;
+		   return stok;
 		}
 		temp = temp->next;
 	}while(temp != NULL);
 }
 
+//NOTA (STRUK) TRANSAKSI
+int Nota(int qty, int harga, int total_produk, int bayar, int kembalian, int total){
+	time_t curr_time;
+	curr_time = time(NULL);
+
+	char *tanggal = ctime(&curr_time);
+
+	if(head == NULL){
+		
+	}else{
+		temp = head;
+		cout<< " ===================================================== "<<endl;
+		cout<< "               NOTA TRANSAKSI TOKO CYAND               "<<endl;
+		cout<< " ===================================================== "<<endl;
+
+		do{
+			cout << "Kode Produk              : " << temp->id_produk << endl;
+			cout << "Nama Produk              : " << temp->nama_produk << endl;
+			
+			//output jumlah pembelian belum sesuai
+			cout << "Jumlah Pembelian           : " << qty << " Pcs" << endl;
+			cout << "Harga Satuan             : " << temp->harga_produk << endl;
+			//output total produk masih blum sesuai
+			cout << "Total harga              : " << total_produk << endl << endl;
+			temp = temp->next;
+			
+		} while (temp != head);
+		
+		cout << "Total Pembelian Produk   : " << total << endl;
+		cout << "Tanggal Pembelian Produk : " << tanggal << endl;
+		cout << "Jumlah uang yang dibayar : " << bayar << endl;
+		cout << "Kembalian                : " << kembalian << endl;
+	}
+	cout << endl;
+}
+
+
 // TRANSAKSI PERHITUNGAN HARGA DAN PEMBAYARAN
 int Transaksi()
 {
 	string produk;
+	int stok;
 	int qty;
 	int harga;
     char lagi = 'y';
@@ -140,6 +266,7 @@ int Transaksi()
     int total = 0;
     int bayar;
     int kembalian;
+    
     do{
         cout << "masukkan nama atau ID produk : ";
         cin >> produk;
@@ -150,17 +277,19 @@ int Transaksi()
         	continue;
 		}else{
 			cout << "masukkan jumlah                : ";
-        		cin >> qty;
-			DiBeli(produk, qty);
+        	cin >> qty;
+
+			stok = DiBeli(produk, qty);
 			total_produk = harga * qty;
 			total += total_produk;
-	        cout<<"Total : "<<total<<endl;
+	        cout<<"Total : "<<total_produk<<endl;
 		}
         cout<<"belanja lagi?[y/n] ";
         cin>>lagi;
         cout<<endl;
     }
 	while(lagi=='Y' || lagi=='y');
+	
 	cout<<"Harga Total yang harus dibayar : "<<total<<endl;
 	cout<<"Jumlah uang yang dibayar       : ";
 	cin>>bayar;
@@ -168,12 +297,37 @@ int Transaksi()
 	if(kembalian > 0){
 		cout<<"Kembalian anda sebesar        : "<<kembalian<<endl;
 	}
+	
+	Nota(qty, harga, total_produk, bayar, kembalian, total);
 }
 
+//MENAMPILKAN DATA PENJUALAN
+int ReportData () {
+	int jumlah_produk = 0, total_pendapatan = 0;
+	
+	cout<<"====================================================================================="<<endl;
+	cout<<"\tID \t\t Nama Produk \t\t Stok \t\t Harga Produk"<<endl;
+	cout<<"====================================================================================="<<endl;
+	
+	 if(head == NULL){
+
+	}else{
+		temp = head;
+		do{
+			cout << "\t"<<temp->id_produk<<"\t\t"<<temp->nama_produk<<"\t\t"<<temp->stok_produk<<"\t\t"<<temp->harga_produk<<endl;
+			cout << "-----------------------------------------------------------------------------------"<<endl;
+			temp = temp->next;
+		}while(temp != head);
+	}
+	// produk terjual dan pendapatan masih belum
+	cout<<"Jumlah produk terjual"<<jumlah_produk<<endl;
+	cout<<"Total pendapatan : "<<total_pendapatan<<endl; 
+}
 
 int main() {
 	
 	int pilihan, pilih;
+	
 	Menu:
 	cout<< " ===================================================== "<<endl;
 	cout<< "                    TOKO CYAND                         "<<endl;
@@ -191,10 +345,12 @@ int main() {
 	cin>>pilihan; 
 	if ( pilihan == 1 ){
 		Transaksi();
+		goto Menu;
 
 	}
 	else if ( pilihan == 2) {
 		
+		MenuKelolaProduk:
 		cout << " ------------------------------------------------ "<<endl;
 		cout << "              MENU KELOLA PRODUK                  "<<endl;
 		cout << " ------------------------------------------------ "<<endl;
@@ -207,24 +363,25 @@ int main() {
 		cout<<"      Masukkan pilihan Anda (1/2/3/4/5) : ";
 		cin>>pilih;
 		if(pilih == 1){
-			
+			TambahProduk();
 		}else if(pilih == 2){
 			TampilStokProduk();
 		}else if(pilih == 3){
-			
+			//TambahStok();
 		}else if(pilih == 4){
 			
 		}else if(pilih == 5){
-			
+			TambahDiskon();
 		}else{
-			
+			goto Menu;
 		}
+		goto MenuKelolaProduk;
 	}
 	else if ( pilihan == 3 ){
 		Notifikasi();
 	}
 	else if ( pilihan == 4 ){
-		
+		ReportData();
 	}
 	else if ( pilihan == 5 ){
 		
@@ -234,7 +391,6 @@ int main() {
 		cout<<endl;
 		goto Menu;
 	}
-	
-	
+
 	return 0;
 }
