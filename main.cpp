@@ -150,7 +150,7 @@ int Transaksi()
         	continue;
 		}else{
 			cout << "masukkan jumlah                : ";
-        	cin >> qty;
+        		cin >> qty;
 			DiBeli(produk, qty);
 			total_produk = harga * qty;
 			total += total_produk;
