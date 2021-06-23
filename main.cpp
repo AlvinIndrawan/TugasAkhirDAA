@@ -84,6 +84,93 @@ void Notifikasi(){
 	}
 }
 
+//MENAMPILKAN SELURUH STOK PRODUK
+void TampilStokProduk(){
+    cout << "-----------------------------------------------------------------------------\n";
+    cout << "\tID\t\tNama Produk\t\tStok\n";
+    cout << "-----------------------------------------------------------------------------\n";
+    
+    if(head == NULL){
+
+	}else{
+		temp = head;
+		do{
+			cout << "\t"<<temp->id_produk<<"\t\t"<<temp->nama_produk<<"\t\t"<<temp->stok_produk<<endl;
+			cout << "------------------------------------------------------------------------------\n";
+			temp = temp->next;
+		}while(temp != NULL);
+	}
+   cout << endl;
+}
+
+
+//MENGECEK HARGA PRODUK YANG DIBELI
+int CekHarga(string cari){
+	int harga;
+	temp = head;
+	do{
+		if(temp->nama_produk == cari || temp->id_produk == cari){
+			harga = temp->harga_produk;
+			return harga;
+		}
+		temp = temp->next;
+	}while(temp != NULL);
+	return -1;
+}
+
+//MENGURANGI JUMLAH STOK PRODUK YANG TERSISA KARENA DIBELI
+void DiBeli(string cari, int qty){
+	temp = head;
+	do{
+		if(temp->nama_produk == cari || temp->id_produk == cari){
+			temp->stok_produk -= qty;
+		}
+		temp = temp->next;
+	}while(temp != NULL);
+}
+
+// TRANSAKSI PERHITUNGAN HARGA DAN PEMBAYARAN
+int Transaksi()
+{
+	string produk;
+	int qty;
+	int harga;
+    char lagi = 'y';
+    int total_produk;
+    int total = 0;
+    int bayar;
+    int kembalian;
+    do{
+        cout << "masukkan nama atau ID produk : ";
+        cin >> produk;
+
+        harga = CekHarga(produk);
+        if(harga == -1){
+        	cout<<"Nama atau ID produk yang dimasukkan salah"<<endl;
+        	continue;
+		}else{
+			cout << "masukkan jumlah                : ";
+        	cin >> qty;
+			DiBeli(produk, qty);
+			total_produk = harga * qty;
+			total += total_produk;
+	        cout<<"Total : "<<total<<endl;
+		}
+        cout<<"belanja lagi?[y/n] ";
+        cin>>lagi;
+        cout<<endl;
+    }
+	while(lagi=='Y' || lagi=='y');
+	cout<<"Harga Total yang harus dibayar : "<<total<<endl;
+	cout<<"Jumlah uang yang dibayar       : ";
+	cin>>bayar;
+	kembalian = bayar -  total;
+	if(kembalian > 0){
+		cout<<"Kembalian anda sebesar        : "<<kembalian<<endl;
+	}
+}
+
+
 int main() {
 	
 	int pilihan, pilih;
@@ -103,6 +190,8 @@ int main() {
 	cout<< "     Masukkan pilihan Anda (1/2/3/4/5) : ";
 	cin>>pilihan; 
 	if ( pilihan == 1 ){
+		Transaksi();
+
 	}
 	else if ( pilihan == 2) {
 		
@@ -117,6 +206,19 @@ int main() {
 		cout << endl;
 		cout<<"      Masukkan pilihan Anda (1/2/3/4/5) : ";
 		cin>>pilih;
+		if(pilih == 1){
+			
+		}else if(pilih == 2){
+			TampilStokProduk();
+		}else if(pilih == 3){
+			
+		}else if(pilih == 4){
+			
+		}else if(pilih == 5){
+			
+		}else{
+			
+		}
 	}
 	else if ( pilihan == 3 ){
 		Notifikasi();
