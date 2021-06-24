@@ -6,7 +6,7 @@ using namespace std;
 
 //STRUCT UNTUK PROGRAM
 struct produk{
-	int no_produk, harga_produk, stok_produk;
+	int harga_produk, stok_produk;
 	string id_produk, nama_produk;
 	
 	produk *next;
@@ -16,8 +16,8 @@ produk *newData, *head=NULL, *tail=NULL, *tampil, *temp;
 
 //STRUCT UNTUK BARANG YANG DIBELI (CART)
 struct keranjang{
-	string nama_produkcart, id_produkcart;
-	int qty_produkcart, ttlharga_pcscart, totalharga_cart;
+	string nama_produkcart[10];
+	int qty_produkcart[10], harga_produkcart[10], totalharga_pcscart[10], jumlahproduk, total;
 	
 	keranjang *nextCart;
 };
@@ -30,20 +30,17 @@ int InputProduk(){
 	int no_produk_nilai, harga_produk_nilai, stok_produk_nilai;
 	string id_produk_nilai, nama_produk_nilai;
 	
-	cout << "\nMasukkan Nomor Produk: ";
-	(cin >> no_produk_nilai).get();
-	
 	cout << "Masukkan Id Produk: ";
-	getline(cin, id_produk_nilai);
+	cin>>id_produk_nilai;
 	
 	cout << "Masukkan Nama Produk: ";
-	getline(cin, nama_produk_nilai);
+	getline(cin >> std::ws, nama_produk_nilai);
 	
 	cout << "Masukkan Stok Produk: ";
-	(cin >> stok_produk_nilai).get();
+	cin>>stok_produk_nilai;
 	
 	cout << "Masukkan Harga Produk: ";
-	(cin >> harga_produk_nilai).get();
+	cin>>harga_produk_nilai;
 	
 	cout << endl;
 	cout << "Produk dengan ID " << id_produk_nilai << " telah terinput! \n";
@@ -61,12 +58,13 @@ int TambahProduk(){
 	if(head == NULL){
 		head = newData;
 		tail = newData;
-		newData->next = head;
+		head->next = NULL;
+		tail->next = NULL;
 	}
 	else{
 		tail->next = newData;
 		tail = newData;
-		tail->next = head;
+		tail->next = NULL;
 	}
 }
 
@@ -182,9 +180,9 @@ void Notifikasi(){
 
 //MENAMPILKAN SELURUH STOK PRODUK
 void TampilStokProduk(){
-    cout << "-----------------------------------------------------------------------------\n";
+    cout << "------------------------------------------------------------------------------\n";
     cout << "\tID\t\tNama Produk\t\tStok\n";
-    cout << "-----------------------------------------------------------------------------\n";
+    cout << "------------------------------------------------------------------------------\n";
     
     if(head == NULL){
 
@@ -194,7 +192,7 @@ void TampilStokProduk(){
 			cout << "\t"<<temp->id_produk<<"\t\t"<<temp->nama_produk<<"\t\t"<<temp->stok_produk<<endl;
 			cout << "------------------------------------------------------------------------------\n";
 			temp = temp->next;
-		}while(temp != head);
+		}while(temp != NULL);
 	}
    cout << endl;
 }
@@ -208,11 +206,10 @@ int CekHarga(string cari){
 		if(temp->nama_produk == cari || temp->id_produk == cari){
 			harga = temp->harga_produk;
 			return harga;
-		}else{
-			return -1;
 		}
 		temp = temp->next;
 	}while(temp != NULL);
+	return -1;
 }
 
 //MENGURANGI JUMLAH STOK PRODUK YANG TERSISA KARENA DIBELI
@@ -222,71 +219,68 @@ int DiBeli(string cari, int qty){
 	do{
 		if(temp->nama_produk == cari || temp->id_produk == cari){
 		   temp->stok_produk -= qty;
-		   stok = temp->stok_produk;
-		   return stok;
+		   return 0;
 		}
 		temp = temp->next;
 	}while(temp != NULL);
 }
 
 // FUNGSI UNTUK TAMBAH KERANJANG
-int TambahCart(string produk, int qty, int harga, int total_produk)
+int TambahCart(string produk[], int qty[], int harga[], int harga_produk[], int jumlah_produk, int total_produk)
 {
 	newCart = new keranjang;
-	//newCart->id_produkcart = produk;
-	newCart->qty_produkcart = qty;
-	newCart->ttlharga_pcscart = total_produk;
+	for(int i=0; i<jumlah_produk; i++){
+		newCart->nama_produkcart[i] = produk[i];
+		newCart->qty_produkcart[i] = qty[i];
+		newCart->harga_produkcart[i] = harga[i];
+		newCart->totalharga_pcscart[i] = harga_produk[i];
+	}
+	newCart->jumlahproduk = jumlah_produk;
+	newCart->total = total_produk;
 	
 	if(headCart == NULL){
 		headCart = newCart;
 		tailCart = newCart;
-		newCart->nextCart = headCart;
+		headCart->nextCart = NULL;
+		tailCart->nextCart = NULL;
 	}
 	else{
 		tailCart->nextCart = newCart;
 		tailCart = newCart;
-		tailCart->nextCart = headCart;
+		tailCart->nextCart = NULL;
 	}
 }
 
 // FUNGSI UNTUK CETAK NOTA
-int Nota(int total, int bayar, int kembalian){
+int Nota(int bayar, int kembalian){
 	time_t curr_time;
 	curr_time = time(NULL);
 
 	char *tanggal = ctime(&curr_time);
 
-	if(headCart == NULL){
-		
-	}else{
-		tempCart = headCart;
-		temp = head;
-		cout<< " ===================================================== "<<endl;
-		cout<< "               NOTA TRANSAKSI TOKO CYAND               "<<endl;
-		cout<< " ===================================================== "<<endl;
-
-		do{
-			cout << "Kode Produk              : " << temp->id_produk << endl;
-			cout << "Nama Produk              : " << temp->nama_produk << endl;
-			cout << "Jumlah Pembelian         : " << tempCart->qty_produkcart << " Pcs" << endl;
-			cout << "Harga Satuan             : " << temp->harga_produk << endl;
-			cout << "Total harga              : " << tempCart->ttlharga_pcscart << endl << endl;
-			tempCart = tempCart->nextCart;
-			temp = temp->next;
-		} while ((tempCart != headCart) && (temp != head));
-		
-		cout << "Total Pembelian Produk   : " << total << endl;
-		cout << "Tanggal Pembelian Produk : " << tanggal << endl;
-		cout << "Jumlah uang yang dibayar : " << bayar << endl;
-		cout << "Kembalian                : " << kembalian << endl;
+	tempCart = tailCart;
+	
+	cout<<endl;
+	cout << "Tanggal : " << tanggal << endl;
+	cout<< " ================================================================================================== "<<endl;
+	cout<< "                                NOTA TRANSAKSI TOKO CYAND                        "<<endl;
+	cout<< " ================================================================================================== "<<endl;
+	cout<<"\tNama Produk \t\t Jumlah \t\t Harga Satuan \t\t Total"<<endl;
+	
+	for(int i=0; i<tempCart->jumlahproduk; i++){
+		cout << "\t"<<tempCart->nama_produkcart[i]<<"\t\t"<<tempCart->qty_produkcart[i]<<"\t\t"<<tempCart->harga_produkcart[i]<<"\t\t"<<tempCart->totalharga_pcscart[i]<<endl;
+		cout << "---------------------------------------------------------------------------------------------"<<endl;
 	}
+	cout << "Total Pembelian Produk   : " << tempCart->total << endl;
+	cout << "Jumlah uang yang dibayar : " << bayar << endl;
+	cout << "Kembalian                : " << kembalian << endl;
+
 	cout << endl;
 }
 
 // FUNGSI UNTUK TRANSAKSI
 int Transaksi(){
 	string produk;
-	int stok;
 	int qty;
 	int harga;
     char lagi = 'y';
@@ -296,45 +290,56 @@ int Transaksi(){
     int kembalian;
     char print_nota = 'y';
     
-    do{
-    cout << "masukkan nama atau ID produk : ";
-    cin >> produk;
+    int jumlah_produk = 0;
+    string nama_produk[10];
+    int qty_produk[10];
+    int harga_satuan_produk[10];
+    int harga_produk[10];
     
-    harga = CekHarga(produk);    
-    if(harga== -1){
-        cout<<"Nama atau ID produk yang dimasukkan salah"<<endl;
-        continue;
-	}else{
-		cout << "masukkan jumlah                : ";
-        cin >> qty;
-
-		stok = DiBeli(produk, qty);
-		total_produk = harga * qty;
-		total += total_produk;
-	    cout<<"Total : "<<total_produk<<endl;
-	    cout <<"Ket  : Produk " << produk << " berhasil diinput!\n";
+    do{
+	    cout << "masukkan nama atau ID produk : ";
+	    getline(cin >> std::ws, produk);
 	    
-	    TambahCart(produk, qty, harga, total_produk);
-	}
+	    harga = CekHarga(produk);    
+	    if(harga== -1){
+	        cout<<"Nama atau ID produk yang dimasukkan salah"<<endl;
+	        continue;
+		}else{
+			cout << "masukkan jumlah             : ";
+	        cin >> qty;
 	
+			DiBeli(produk, qty);
+			total_produk = harga * qty;
+			total += total_produk;
+		    cout<<"Total : "<<total_produk<<endl;
+		    cout <<"Ket  : Produk " << produk << " berhasil diinput!\n";
+		    
+		    nama_produk[jumlah_produk] = produk;
+		    qty_produk[jumlah_produk] = qty;
+		    harga_satuan_produk[jumlah_produk] = harga;
+		    harga_produk[jumlah_produk] = total_produk;
+		    jumlah_produk++;
+		}
         cout<<"belanja lagi?[y/n] ";
         cin>>lagi;
         cout<<endl;
 	}
 	while(lagi=='Y' || lagi=='y');
 	
+	TambahCart(nama_produk, qty_produk, harga_satuan_produk, harga_produk, jumlah_produk,total);
+	
 	cout<<"Harga Total yang harus dibayar : "<<total<<endl;
 	cout<<"Jumlah uang yang dibayar       : ";
 	cin>>bayar;
-	kembalian = bayar -  total;
+	kembalian = bayar - total;
 	if(kembalian > 0){
-		cout<<"Kembalian anda sebesar        : "<<kembalian<<endl;
+		cout<<"Kembalian anda sebesar      : "<<kembalian<<endl;
 	}
 	
 	cout << "Apakah ingin print nota? [y/n] \n";
 	cin >> print_nota;
 	if(print_nota == 'Y' || print_nota == 'y'){
-		Nota(total, bayar, kembalian);
+		Nota(bayar, kembalian);
 	} else{
 	  cout << "Terima Kasih Sudah Berbelanja! \n";
 	}
@@ -398,8 +403,9 @@ int main() {
 		cout << "    3. Tambah stok produk "<<endl;
 		cout << "    4. Edit Produk "<<endl;
 		cout << "    5. Tambah diskon "<<endl;
+		cout << "    6. Kembali ke menu utama "<<endl;
 		cout << endl;
-		cout<<"      Masukkan pilihan Anda (1/2/3/4/5) : ";
+		cout<<"      Masukkan pilihan Anda (1/2/3/4/5/6) : ";
 		cin>>pilih;
 		if(pilih == 1){
 			TambahProduk();
@@ -410,14 +416,17 @@ int main() {
 		}else if(pilih == 4){
 			
 		}else if(pilih == 5){
-			
-		}else{
+			TambahDiskon();
+		}else if(pilih == 6){
 			goto Menu;
+		}else{
+			cout << " Pilihan tidak ada di menu, Pilihan (1/2/3/4/5/6) "<<endl;
 		}
 		goto MenuKelolaProduk;
 	}
 	else if ( pilihan == 3 ){
 		Notifikasi();
+		goto Menu;
 	}
 	else if ( pilihan == 4 ){
 		ReportData();
