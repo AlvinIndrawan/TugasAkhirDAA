@@ -371,6 +371,8 @@ int ReportData () {
 int main() {
 	
 	int pilihan, pilih;
+	string produk_edit;
+	int stok_tambah;
 	
 	Menu:
 	cout<< " ===================================================== "<<endl;
@@ -412,7 +414,11 @@ int main() {
 		}else if(pilih == 2){
 			TampilStokProduk();
 		}else if(pilih == 3){
-			//TambahStok();
+			cout<<"Masukkan nama atau ID produk yang ingin ditambah stoknya : ";
+			getline(cin >> std::ws, produk_edit);
+			cout<<"Masukkan jumlah stok yang ditambah                       : ";
+			cin>>stok_tambah;
+			TambahStok(produk_edit, stok_tambah);
 		}else if(pilih == 4){
 			
 		}else if(pilih == 5){
