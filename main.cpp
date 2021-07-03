@@ -212,6 +212,19 @@ int CekHarga(string cari){
 	return -1;
 }
 
+//MENGECEK NAMA PRODUK YANG DIBELI
+string CekNama(string cari){
+	string nama; 
+	temp = head;
+	do{
+		if(temp->nama_produk == cari || temp->id_produk == cari){
+			nama = temp->nama_produk;
+			return nama;
+		}
+		temp = temp->next;
+	}while(temp != NULL);
+}
+
 //MENGURANGI JUMLAH STOK PRODUK YANG TERSISA KARENA DIBELI
 int DiBeli(string cari, int qty){
 	int stok;
@@ -283,6 +296,7 @@ int Transaksi(){
 	string produk;
 	int qty;
 	int harga;
+	string nama = "kosong";
     char lagi = 'y';
     int total_produk;
     int total = 0;
@@ -300,13 +314,15 @@ int Transaksi(){
 	    cout << "masukkan nama atau ID produk : ";
 	    getline(cin >> std::ws, produk);
 	    
-	    harga = CekHarga(produk);    
-	    if(harga== -1){
+		nama = CekNama(produk);    
+	    if(nama == "kosong"){
 	        cout<<"Nama atau ID produk yang dimasukkan salah"<<endl;
 	        continue;
 		}else{
 			cout << "masukkan jumlah             : ";
 	        cin >> qty;
+	        
+	        harga = CekHarga(produk);
 	
 			DiBeli(produk, qty);
 			total_produk = harga * qty;
@@ -314,7 +330,7 @@ int Transaksi(){
 		    cout<<"Total : "<<total_produk<<endl;
 		    cout <<"Ket  : Produk " << produk << " berhasil diinput!\n";
 		    
-		    nama_produk[jumlah_produk] = produk;
+		    nama_produk[jumlah_produk] = nama;
 		    qty_produk[jumlah_produk] = qty;
 		    harga_satuan_produk[jumlah_produk] = harga;
 		    harga_produk[jumlah_produk] = total_produk;
@@ -345,27 +361,73 @@ int Transaksi(){
 	}
 }
 
-//MENAMPILKAN DATA PENJUALAN
+//REPORT DATA PENJUALAN
 int ReportData () {
-	int jumlah_produk = 0, total_pendapatan = 0;
+	int total_jumlah_produk = 0;
+	int total_pendapatan = 0;
+	int n = 0;
+	int indeks;
+	int sudah_ada = 0;
+	int jumlah_jenis_produk = 0;
+	int total = 0;
+	string nama_produk[20];
+	int jumlah_produk[20];
+	int total_produk[20];
 	
 	cout<<"====================================================================================="<<endl;
-	cout<<"\tID \t\t Nama Produk \t\t Stok \t\t Harga Produk"<<endl;
+	cout<<"\tNama Produk \t\t Jumlah \t\t Total"<<endl;
 	cout<<"====================================================================================="<<endl;
 	
-	 if(head == NULL){
+	 if(headCart == NULL){
 
 	}else{
-		temp = head;
+		tempCart = headCart;
 		do{
-			cout << "\t"<<temp->id_produk<<"\t\t"<<temp->nama_produk<<"\t\t"<<temp->stok_produk<<"\t\t"<<temp->harga_produk<<endl;
+			n = tempCart->jumlahproduk;
+			if(jumlah_jenis_produk == 0){
+				for(int i=0; i<n; i++){
+					//ID produk belum
+					nama_produk[i] = tempCart->nama_produkcart[i];
+					jumlah_produk[i] = tempCart->qty_produkcart[i];
+					total_produk[i] = tempCart->totalharga_pcscart[i];
+					jumlah_jenis_produk++;
+				}
+			}else{
+				for(int i=0; i<n; i++){
+					//Mengecek apakah sudah ada data produk yang sama
+					for(int x=0; x<jumlah_jenis_produk; x++){
+						if(tempCart->nama_produkcart[i] == nama_produk[x]){
+							indeks = x;
+							sudah_ada = 1;
+						}
+					}
+					
+					if(sudah_ada == 1){
+						jumlah_produk[indeks] += tempCart->qty_produkcart[i];
+						total_produk[indeks] += tempCart->totalharga_pcscart[i];
+						sudah_ada = 0;
+					}else{
+						nama_produk[jumlah_jenis_produk] = tempCart->nama_produkcart[i];
+						jumlah_produk[jumlah_jenis_produk] = tempCart->qty_produkcart[i];
+						total_produk[jumlah_jenis_produk] = tempCart->totalharga_pcscart[i];
+						jumlah_jenis_produk++;
+					}
+				}
+			}
+			total += tempCart->total;
+			tempCart = tempCart->nextCart;
+		}while(tempCart != NULL);
+		
+		for(int i=0; i<jumlah_jenis_produk; i++){
+			cout << "\t"<<nama_produk[i]<<"\t\t"<<jumlah_produk[i]<<"\t\t"<<total_produk[i]<<endl;
 			cout << "-----------------------------------------------------------------------------------"<<endl;
-			temp = temp->next;
-		}while(temp != head);
+			total_jumlah_produk += jumlah_produk[i];
+		}
+
 	}
-	// produk terjual dan pendapatan masih belum
-	cout<<"Jumlah produk terjual"<<jumlah_produk<<endl;
-	cout<<"Total pendapatan : "<<total_pendapatan<<endl; 
+	cout<<endl;
+	cout<<"Jumlah produk terjual : "<<total_jumlah_produk<<endl;
+	cout<<"Total pendapatan      : "<<total<<endl<<endl; 
 }
 
 int main() {
@@ -436,6 +498,7 @@ int main() {
 	}
 	else if ( pilihan == 4 ){
 		ReportData();
+		goto Menu;
 	}
 	else if ( pilihan == 5 ){
 		
