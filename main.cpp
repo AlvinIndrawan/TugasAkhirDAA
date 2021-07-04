@@ -100,7 +100,7 @@ int TambahStok(string cari, int stok){
 }
 
 //FUNGSI EDIT PRODUK
-int EditProduk(string cari, int harga){
+int EditHargaProduk(string cari, int harga){
 	
 	if(head == NULL){
 		cout<<"Data masih kosong";
@@ -118,6 +118,26 @@ int EditProduk(string cari, int harga){
 	}
 	
 }
+
+int EditNamaProduk(string cari, string nama){
+	
+	if(head == NULL){
+		cout<<"Data masih kosong";
+	}else{
+		temp = head;
+		do{
+			if(temp->nama_produk == cari || temp->id_produk == cari){
+				temp->nama_produk = nama;
+				cout<<"Data produk "<<temp->nama_produk<<" sudah berhasil diedit"<<endl;
+				return 1;
+			}
+			temp = temp->next;
+		}while(temp != NULL);
+		cout<<"Nama Produk tidak ditemukan";
+	}
+	
+}
+
 
 // FUNGSI TAMBAH DISKON
 int TambahDiskon () {
