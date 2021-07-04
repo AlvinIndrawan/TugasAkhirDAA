@@ -354,7 +354,7 @@ int Nota(int bayar, int kembalian, float diskon, int total){
 	cout<<"\tNama Produk \t\t Jumlah \t\t Harga Satuan \t\t Total"<<endl;
 	
 	for(int i=0; i<tempCart->jumlahproduk; i++){
-		cout << "\t"<<tempCart->nama_produkcart[i]<<"\t\t\t "<<tempCart->qty_produkcart[i]<<"\t\t\t "<<tempCart->harga_produkcart[i]<<"\t\t\t "<<tempCart->totalharga_pcscart[i]<<endl;
+		cout << "\t"<<tempCart->nama_produkcart[i]<<"\t\t "<<tempCart->qty_produkcart[i]<<"\t\t\t "<<tempCart->harga_produkcart[i]<<"\t\t\t "<<tempCart->totalharga_pcscart[i]<<endl;
 		cout << "---------------------------------------------------------------------------------------------"<<endl<<endl;
 	}
 	cout << "Total Pembelian Produk   : " << tempCart->total << endl;
@@ -362,7 +362,7 @@ int Nota(int bayar, int kembalian, float diskon, int total){
 	if(diskon==-1){
 		cout << "Diskon Pembelian         : tidak ada" << endl;
 	} else{
-		cout << "Diskon Pembelian         : " << diskon << endl;
+		cout << "Diskon Pembelian         : " << tempDiskon->potongan_persen << "%" << endl;
 	}
 	
 	cout << "Total Pembelian Akhir    : " << total << endl;
@@ -515,7 +515,7 @@ int ReportData () {
 		}while(tempCart != NULL);
 		
 		for(int i=0; i<jumlah_jenis_produk; i++){
-			cout << "\t"<<nama_produk[i]<<"\t\t\t "<<jumlah_produk[i]<<"\t\t\t "<<total_produk[i]<<endl;
+			cout << "\t"<<nama_produk[i]<<"\t\t "<<jumlah_produk[i]<<"\t\t "<<total_produk[i]<<endl;
 			cout << "-----------------------------------------------------------------------------------"<<endl;
 			total_jumlah_produk += jumlah_produk[i];
 		}
