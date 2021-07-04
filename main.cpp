@@ -17,7 +17,8 @@ produk *newData, *head=NULL, *tail=NULL, *tampil, *temp;
 //STRUCT UNTUK BARANG YANG DIBELI (CART)
 struct keranjang{
 	string nama_produkcart[10];
-	int qty_produkcart[10], harga_produkcart[10], totalharga_pcscart[10], jumlahproduk, total;
+	int qty_produkcart[10], harga_produkcart[10], totalharga_pcscart[10];
+	int jumlahproduk, total, total_bersih;
 	
 	keranjang *nextCart;
 };
@@ -273,6 +274,7 @@ string CekNama(string cari){
 		}
 		temp = temp->next;
 	}while(temp != NULL);
+	return "kosong";
 }
 
 //MENGURANGI JUMLAH STOK PRODUK YANG TERSISA KARENA DIBELI
@@ -289,7 +291,7 @@ int DiBeli(string cari, int qty){
 }
 
 // FUNGSI UNTUK TAMBAH KERANJANG
-int TambahCart(string produk[], int qty[], int harga[], int harga_produk[], int jumlah_produk, int total_produk)
+int TambahCart(string produk[], int qty[], int harga[], int harga_produk[], int jumlah_produk, int total_produk, int total_produk_bersih)
 {
 	newCart = new keranjang;
 	for(int i=0; i<jumlah_produk; i++){
@@ -300,6 +302,7 @@ int TambahCart(string produk[], int qty[], int harga[], int harga_produk[], int 
 	}
 	newCart->jumlahproduk = jumlah_produk;
 	newCart->total = total_produk;
+	newCart->total_bersih = total_produk_bersih;
 	
 	if(headCart == NULL){
 		headCart = newCart;
@@ -401,20 +404,19 @@ int Transaksi(){
 	}
 	while(lagi=='Y' || lagi=='y');
 	
-	TambahCart(nama_produk, qty_produk, harga_satuan_produk, harga_produk, jumlah_produk,total);
-	
 	cout<<"Harga Total yang harus dibayar : "<<total<<endl;
 	
 	diskon = CekDiskon(total);
 	
 	if(diskon==-1){
 		cout << "Diskon pembelian               : Maaf, tidak mencapai minimal pembelian"<<endl;
+		TambahCart(nama_produk, qty_produk, harga_satuan_produk, harga_produk, jumlah_produk,total, total);
 	}else{
 		cout << "Berhasil menerapkan diskon sebesar " << tempDiskon->potongan_persen << "% " <<endl;
 		cout << "Diskon pembelian               : " << diskon << endl;
 		total = total - diskon;
 		cout << "Harga total yang harus dibayar : "<<total<<endl;
-		
+		TambahCart(nama_produk, qty_produk, harga_satuan_produk, harga_produk, jumlah_produk,total + diskon, total);
 	}
 	
 	cout<<"Jumlah uang yang dibayar       : ";
@@ -442,6 +444,7 @@ int ReportData () {
 	int sudah_ada = 0;
 	int jumlah_jenis_produk = 0;
 	int total = 0;
+	int total_bersih = 0;
 	string nama_produk[20];
 	int jumlah_produk[20];
 	int total_produk[20];
@@ -487,6 +490,7 @@ int ReportData () {
 				}
 			}
 			total += tempCart->total;
+			total_bersih += tempCart->total_bersih;
 			tempCart = tempCart->nextCart;
 		}while(tempCart != NULL);
 		
@@ -498,8 +502,9 @@ int ReportData () {
 
 	}
 	cout<<endl;
-	cout<<"Jumlah produk terjual : "<<total_jumlah_produk<<endl;
-	cout<<"Total pendapatan      : "<<total<<endl<<endl; 
+	cout<<"Jumlah produk terjual   : "<<total_jumlah_produk<<endl;
+	cout<<"Total pendapatan        : "<<total<<endl; 
+	cout<<"Total pendapatan bersih : "<<total_bersih<<endl<<endl; 
 }
 
 int main() {
