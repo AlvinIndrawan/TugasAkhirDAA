@@ -24,6 +24,15 @@ struct keranjang{
 
 keranjang *newCart, *headCart=NULL, *tailCart=NULL, *tampilCart, *tempCart;
 
+//TRUCT UNTUK DISKON
+struct diskon{
+	int minimum_pembelian;
+	float potongan, potongan_persen;
+	
+	diskon *next;
+};
+diskon *newDiskon, *headDiskon=NULL, *tailDiskon=NULL, *tempDiskon, *tempDiskon2;
+
 
 //FUNGSI INPUT PRODUK
 int InputProduk(){
@@ -111,42 +120,83 @@ int EditProduk(string cari, int harga){
 
 // FUNGSI TAMBAH DISKON
 int TambahDiskon () {
-	int d;
+	float potongan_nilai_persen;
+	int minimum_pembelian_nilai;
+	float potongan_nilai;
+	int i=1;
 	
-	cout<<" Pilihan tambah diskon :"<<endl;
-	cout<<" \t 1. Diskon 10 %"<<endl;
-	cout<<" \t 2. Diskon 15 %"<<endl;
-	cout<<" \t 3. Diskon 20 %"<<endl;
-	cout<<" \t 4. Diskon 30 %"<<endl;
-	cout<<" \t 5. Diskon 50 %"<<endl;
-	cout<<" Masukkan pilihan Anda (1/2/3/4/5) : ";
-	cin>>d;
+	cout << "Masukkan diskon yang ingin Anda terapkan (dalam persen)  : ";
+	cin >> potongan_nilai_persen;
 	
-	if ( d == 1)
-	{
-		
+	cout << "Masukkan minimum pembelian untuk mendapatkan diskon :    ";
+	cin >> minimum_pembelian_nilai;
+	
+	potongan_nilai = potongan_nilai_persen / 100;
+	
+	cout << "Keterangan : Diskon sebesar " << potongan_nilai_persen << "% untuk minimum pembelian Rp." << minimum_pembelian_nilai << " telah berhasil diinput! \n\n";
+	
+	newDiskon = new diskon;
+	newDiskon->potongan_persen = potongan_nilai_persen;
+	newDiskon->potongan = potongan_nilai;
+	newDiskon->minimum_pembelian = minimum_pembelian_nilai;
+	
+	if(headDiskon == NULL){
+		headDiskon = newDiskon;
+		tailDiskon = newDiskon;
+		headDiskon->next = NULL;
+		tailDiskon->next = NULL;
 	}
-	else if ( d == 2)
-	{
-		
+	else{
+		tailDiskon->next = newDiskon;
+		tailDiskon = newDiskon;
+		tailDiskon->next = NULL;
 	}
-	else if ( d == 3)
-	{
-		
+	
+	//menampilkan Diskon yang telah diinput tadi
+	cout << "------------------------------------------------------------------------------\n";
+    cout << "\tNo\t\tJumlah Diskon\t\tMinimum Pembelian\n";
+    cout << "------------------------------------------------------------------------------\n";
+    
+    if(headDiskon == NULL){
+
+	}else{
+		tempDiskon = headDiskon;
+		do{
+			cout << "\t"<<i<<"\t\t"<<tempDiskon->potongan_persen << "%"<<"\t\t"<<tempDiskon->minimum_pembelian<<endl;
+			cout << "------------------------------------------------------------------------------\n";
+			i++;
+			tempDiskon = tempDiskon->next;
+		}while(tempDiskon != NULL);
 	}
-	else if ( d == 4)
-	{
-		
-	}
-	else if ( d == 5)
-	{
-		
-	}
-	else 
-	{
-		cout<<" Pilihan tidak tersedia !"<<endl;
-	}
+   cout << endl;
 }
+
+//FUNGSI CEK DISKON
+int CekDiskon(int total){
+	int diskon;
+	
+	tempDiskon = headDiskon;
+	tempDiskon2 = tempDiskon->next;
+	
+	do{
+		if(total >= tempDiskon->minimum_pembelian && total < tempDiskon2->minimum_pembelian){
+			diskon = tempDiskon->potongan * total;
+			return diskon;
+		}
+		else if(tempDiskon->minimum_pembelian > total){
+			return -1;
+		}
+		tempDiskon = tempDiskon->next;
+		tempDiskon2 = tempDiskon2->next;
+	} while(tempDiskon != NULL && tempDiskon2 != NULL);
+	
+	if(tempDiskon2 == NULL){
+		diskon = tempDiskon->potongan * total;
+		return diskon;
+	}
+	return -1;
+}
+
 
 //NOTIFIKASI
 void Notifikasi(){
@@ -265,7 +315,7 @@ int TambahCart(string produk[], int qty[], int harga[], int harga_produk[], int 
 }
 
 // FUNGSI UNTUK CETAK NOTA
-int Nota(int bayar, int kembalian){
+int Nota(int bayar, int kembalian, float diskon, int total){
 	time_t curr_time;
 	curr_time = time(NULL);
 
@@ -281,10 +331,18 @@ int Nota(int bayar, int kembalian){
 	cout<<"\tNama Produk \t\t Jumlah \t\t Harga Satuan \t\t Total"<<endl;
 	
 	for(int i=0; i<tempCart->jumlahproduk; i++){
-		cout << "\t"<<tempCart->nama_produkcart[i]<<"\t\t"<<tempCart->qty_produkcart[i]<<"\t\t"<<tempCart->harga_produkcart[i]<<"\t\t"<<tempCart->totalharga_pcscart[i]<<endl;
-		cout << "---------------------------------------------------------------------------------------------"<<endl;
+		cout << "\t"<<tempCart->nama_produkcart[i]<<"\t\t\t "<<tempCart->qty_produkcart[i]<<"\t\t\t "<<tempCart->harga_produkcart[i]<<"\t\t\t "<<tempCart->totalharga_pcscart[i]<<endl;
+		cout << "---------------------------------------------------------------------------------------------"<<endl<<endl;
 	}
 	cout << "Total Pembelian Produk   : " << tempCart->total << endl;
+	
+	if(diskon==-1){
+		cout << "Diskon Pembelian         : tidak ada" << endl;
+	} else{
+		cout << "Diskon Pembelian         : " << diskon << endl;
+	}
+	
+	cout << "Total Pembelian Akhir    : " << total << endl;
 	cout << "Jumlah uang yang dibayar : " << bayar << endl;
 	cout << "Kembalian                : " << kembalian << endl;
 
@@ -309,6 +367,7 @@ int Transaksi(){
     int qty_produk[10];
     int harga_satuan_produk[10];
     int harga_produk[10];
+    float diskon;
     
     do{
 	    cout << "masukkan nama atau ID produk : ";
@@ -336,7 +395,7 @@ int Transaksi(){
 		    harga_produk[jumlah_produk] = total_produk;
 		    jumlah_produk++;
 		}
-        cout<<"belanja lagi?[y/n] ";
+        cout<<"belanja lagi?[y/n] : ";
         cin>>lagi;
         cout<<endl;
 	}
@@ -345,17 +404,30 @@ int Transaksi(){
 	TambahCart(nama_produk, qty_produk, harga_satuan_produk, harga_produk, jumlah_produk,total);
 	
 	cout<<"Harga Total yang harus dibayar : "<<total<<endl;
+	
+	diskon = CekDiskon(total);
+	
+	if(diskon==-1){
+		cout << "Diskon pembelian               : Maaf, tidak mencapai minimal pembelian"<<endl;
+	}else{
+		cout << "Berhasil menerapkan diskon sebesar " << tempDiskon->potongan_persen << "% " <<endl;
+		cout << "Diskon pembelian               : " << diskon << endl;
+		total = total - diskon;
+		cout << "Harga total yang harus dibayar : "<<total<<endl;
+		
+	}
+	
 	cout<<"Jumlah uang yang dibayar       : ";
 	cin>>bayar;
 	kembalian = bayar - total;
 	if(kembalian > 0){
-		cout<<"Kembalian anda sebesar      : "<<kembalian<<endl;
+		cout << "Kembalian anda sebesar         : "<<kembalian<<endl<<endl;
 	}
 	
-	cout << "Apakah ingin print nota? [y/n] \n";
+	cout << "Apakah ingin print nota? [y/n] : ";
 	cin >> print_nota;
 	if(print_nota == 'Y' || print_nota == 'y'){
-		Nota(bayar, kembalian);
+		Nota(bayar, kembalian, diskon, total);
 	} else{
 	  cout << "Terima Kasih Sudah Berbelanja! \n";
 	}
@@ -419,7 +491,7 @@ int ReportData () {
 		}while(tempCart != NULL);
 		
 		for(int i=0; i<jumlah_jenis_produk; i++){
-			cout << "\t"<<nama_produk[i]<<"\t\t"<<jumlah_produk[i]<<"\t\t"<<total_produk[i]<<endl;
+			cout << "\t"<<nama_produk[i]<<"\t\t\t "<<jumlah_produk[i]<<"\t\t\t "<<total_produk[i]<<endl;
 			cout << "-----------------------------------------------------------------------------------"<<endl;
 			total_jumlah_produk += jumlah_produk[i];
 		}
@@ -450,7 +522,9 @@ int main() {
 	cout<<endl;
 	
 	cout<< "     Masukkan pilihan Anda (1/2/3/4/5) : ";
-	cin>>pilihan; 
+	cin>>pilihan;
+	cout<<endl;
+	 
 	if ( pilihan == 1 ){
 		Transaksi();
 		goto Menu;
@@ -471,6 +545,8 @@ int main() {
 		cout << endl;
 		cout<<"      Masukkan pilihan Anda (1/2/3/4/5/6) : ";
 		cin>>pilih;
+		cout<<endl;
+		
 		if(pilih == 1){
 			TambahProduk();
 		}else if(pilih == 2){
