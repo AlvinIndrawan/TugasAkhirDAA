@@ -7,7 +7,7 @@ using namespace std;
 //STRUCT UNTUK PROGRAM
 struct produk{
 	int harga_produk, stok_produk;
-	string id_produk, nama_produk;
+	string id_produk, nama_produk, exp_date_produk;
 	
 	produk *next;
 };
@@ -38,13 +38,16 @@ diskon *newDiskon, *headDiskon=NULL, *tailDiskon=NULL, *tempDiskon, *tempDiskon2
 //FUNGSI INPUT PRODUK
 int InputProduk(){
 	int no_produk_nilai, harga_produk_nilai, stok_produk_nilai;
-	string id_produk_nilai, nama_produk_nilai;
+	string id_produk_nilai, nama_produk_nilai, exp_date_produk_nilai;
 	
 	cout << "Masukkan Id Produk: ";
 	cin>>id_produk_nilai;
 	
 	cout << "Masukkan Nama Produk: ";
 	getline(cin >> std::ws, nama_produk_nilai);
+	
+	cout << "Masukkan Expired Date Produk : ";
+	getline(cin >> std::ws, exp_date_produk_nilai);
 	
 	cout << "Masukkan Stok Produk: ";
 	cin>>stok_produk_nilai;
@@ -58,6 +61,7 @@ int InputProduk(){
 	newData = new produk;
 	newData->id_produk = id_produk_nilai;
 	newData->nama_produk = nama_produk_nilai;
+	newData->exp_date_produk = exp_date_produk_nilai;
 	newData->stok_produk = stok_produk_nilai;
 	newData->harga_produk = harga_produk_nilai;
 }
