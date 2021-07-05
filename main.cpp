@@ -7,7 +7,7 @@ using namespace std;
 //STRUCT UNTUK PROGRAM
 struct produk{
 	int harga_produk, stok_produk;
-	string id_produk, nama_produk;
+	string id_produk, nama_produk, exp_date_produk;
 	
 	produk *next;
 };
@@ -25,7 +25,7 @@ struct keranjang{
 
 keranjang *newCart, *headCart=NULL, *tailCart=NULL, *tampilCart, *tempCart;
 
-//TRUCT UNTUK DISKON
+//STRUCT UNTUK DISKON
 struct diskon{
 	int minimum_pembelian;
 	float potongan, potongan_persen;
@@ -38,18 +38,21 @@ diskon *newDiskon, *headDiskon=NULL, *tailDiskon=NULL, *tempDiskon, *tempDiskon2
 //FUNGSI INPUT PRODUK
 int InputProduk(){
 	int no_produk_nilai, harga_produk_nilai, stok_produk_nilai;
-	string id_produk_nilai, nama_produk_nilai;
+	string id_produk_nilai, nama_produk_nilai, exp_date_produk_nilai;
 	
-	cout << "Masukkan Id Produk: ";
+	cout << "Masukkan Id Produk : ";
 	cin>>id_produk_nilai;
 	
-	cout << "Masukkan Nama Produk: ";
+	cout << "Masukkan Nama Produk : ";
 	getline(cin >> std::ws, nama_produk_nilai);
 	
-	cout << "Masukkan Stok Produk: ";
+	cout << "Masukkan Expired Date Produk : ";
+	getline(cin >> std::ws, exp_date_produk_nilai);
+	
+	cout << "Masukkan Stok Produk : ";
 	cin>>stok_produk_nilai;
 	
-	cout << "Masukkan Harga Produk: ";
+	cout << "Masukkan Harga Produk : ";
 	cin>>harga_produk_nilai;
 	
 	cout << endl;
@@ -58,6 +61,7 @@ int InputProduk(){
 	newData = new produk;
 	newData->id_produk = id_produk_nilai;
 	newData->nama_produk = nama_produk_nilai;
+	newData->exp_date_produk = exp_date_produk_nilai;
 	newData->stok_produk = stok_produk_nilai;
 	newData->harga_produk = harga_produk_nilai;
 }
@@ -100,7 +104,7 @@ int TambahStok(string cari, int stok){
 }
 
 //FUNGSI EDIT PRODUK
-int EditHargaProduk(string cari, int harga){
+int EditProduk(string cari, int harga){
 	
 	if(head == NULL){
 		cout<<"Data masih kosong";
@@ -118,26 +122,6 @@ int EditHargaProduk(string cari, int harga){
 	}
 	
 }
-
-int EditNamaProduk(string cari, string nama){
-	
-	if(head == NULL){
-		cout<<"Data masih kosong";
-	}else{
-		temp = head;
-		do{
-			if(temp->nama_produk == cari || temp->id_produk == cari){
-				temp->nama_produk = nama;
-				cout<<"Data produk "<<temp->nama_produk<<" sudah berhasil diedit"<<endl;
-				return 1;
-			}
-			temp = temp->next;
-		}while(temp != NULL);
-		cout<<"Nama Produk tidak ditemukan";
-	}
-	
-}
-
 
 // FUNGSI TAMBAH DISKON
 int TambahDiskon () {
@@ -354,7 +338,7 @@ int Nota(int bayar, int kembalian, float diskon, int total){
 	cout<<"\tNama Produk \t\t Jumlah \t\t Harga Satuan \t\t Total"<<endl;
 	
 	for(int i=0; i<tempCart->jumlahproduk; i++){
-		cout << "\t"<<tempCart->nama_produkcart[i]<<"\t\t "<<tempCart->qty_produkcart[i]<<"\t\t\t "<<tempCart->harga_produkcart[i]<<"\t\t\t "<<tempCart->totalharga_pcscart[i]<<endl;
+		cout << "\t"<<tempCart->nama_produkcart[i]<<"\t\t\t "<<tempCart->qty_produkcart[i]<<"\t\t\t "<<tempCart->harga_produkcart[i]<<"\t\t\t "<<tempCart->totalharga_pcscart[i]<<endl;
 		cout << "---------------------------------------------------------------------------------------------"<<endl<<endl;
 	}
 	cout << "Total Pembelian Produk   : " << tempCart->total << endl;
@@ -362,7 +346,7 @@ int Nota(int bayar, int kembalian, float diskon, int total){
 	if(diskon==-1){
 		cout << "Diskon Pembelian         : tidak ada" << endl;
 	} else{
-		cout << "Diskon Pembelian         : " << tempDiskon->potongan_persen << "%" << endl;
+		cout << "Diskon Pembelian         : " << diskon << endl;
 	}
 	
 	cout << "Total Pembelian Akhir    : " << total << endl;
@@ -515,7 +499,7 @@ int ReportData () {
 		}while(tempCart != NULL);
 		
 		for(int i=0; i<jumlah_jenis_produk; i++){
-			cout << "\t"<<nama_produk[i]<<"\t\t "<<jumlah_produk[i]<<"\t\t "<<total_produk[i]<<endl;
+			cout << "\t"<<nama_produk[i]<<"\t\t\t "<<jumlah_produk[i]<<"\t\t\t "<<total_produk[i]<<endl;
 			cout << "-----------------------------------------------------------------------------------"<<endl;
 			total_jumlah_produk += jumlah_produk[i];
 		}
