@@ -234,7 +234,7 @@ void Notifikasi(){
 	}else{
 		temp = head;
 		do{
-			if(temp->stok_produk < 100){
+			if(temp->stok_produk < 20){
 				nama_produk[n] = temp->nama_produk;
 				stok[n] = temp->stok_produk;
 				n++;
