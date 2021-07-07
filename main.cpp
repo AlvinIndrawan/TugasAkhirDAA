@@ -533,9 +533,9 @@ int ReportData () {
 
 int main() {
 	
-	int pilihan, pilih;
-	string produk_edit;
-	int stok_tambah;
+	int pilihan, pilih, pilih_edit;
+	string produk_edit, cari, nama;
+	int stok_tambah, harga;
 	
 	Menu:
 	cout<< " ===================================================== "<<endl;
@@ -587,7 +587,28 @@ int main() {
 			cin>>stok_tambah;
 			TambahStok(produk_edit, stok_tambah);
 		}else if(pilih == 4){
-			
+			cout<<"     Menu Edit Produk :     "<<endl; 
+			cout<<"     1. Edit Nama Produk"<<endl; 
+			cout<<"     2. Edit Harga Produk"<<endl; 
+			cout<<endl; 
+			cout<<"     Masukkan Pilihan : ";
+			cin>>pilih_edit; 
+			if (pilih_edit == 1){ 
+				cout<<"Masukkan Nama Produk atau ID Produk yang ingin di edit : ";
+				getline(cin>>std::ws, cari);
+				cout<<"Masukkan Nama Produk baru :";
+				getline(cin>>std::ws, nama);
+				
+				EditNamaProduk(cari, nama); 
+			}
+			if (pilih_edit == 2){
+				cout<<"Masukkan Nama Produk atau ID Produk yang ingin di edit : ";
+				getline(cin>>std::ws, cari);
+				cout<<"Masukkan Harga Produk terbaru :";
+				cin>>harga; 
+				
+				EditHargaProduk(cari, harga); 
+			}
 		}else if(pilih == 5){
 			TambahDiskon();
 		}else if(pilih == 6){
