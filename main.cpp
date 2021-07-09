@@ -25,7 +25,7 @@ struct keranjang{
 
 keranjang *newCart, *headCart=NULL, *tailCart=NULL, *tampilCart, *tempCart;
 
-//TRUCT UNTUK DISKON
+//STRUCT UNTUK DISKON
 struct diskon{
 	int minimum_pembelian;
 	float potongan, potongan_persen;
@@ -485,7 +485,7 @@ int ReportData () {
 			n = tempCart->jumlahproduk;
 			if(jumlah_jenis_produk == 0){
 				for(int i=0; i<n; i++){
-					//ID produk belum
+					//data produk belum ada dalam array
 					nama_produk[i] = tempCart->nama_produkcart[i];
 					jumlah_produk[i] = tempCart->qty_produkcart[i];
 					total_produk[i] = tempCart->totalharga_pcscart[i];
