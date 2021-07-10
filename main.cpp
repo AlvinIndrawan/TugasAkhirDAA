@@ -587,6 +587,7 @@ int main() {
 			cin>>stok_tambah;
 			TambahStok(produk_edit, stok_tambah);
 		}else if(pilih == 4){
+			MenuEdit:
 			cout<<"     Menu Edit Produk :     "<<endl; 
 			cout<<"     1. Edit Nama Produk"<<endl; 
 			cout<<"     2. Edit Harga Produk"<<endl; 
@@ -601,7 +602,7 @@ int main() {
 				
 				EditNamaProduk(cari, nama); 
 			}
-			if (pilih_edit == 2){
+			else if (pilih_edit == 2){
 				cout<<"Masukkan Nama Produk atau ID Produk yang ingin di edit : ";
 				getline(cin>>std::ws, cari);
 				cout<<"Masukkan Harga Produk terbaru :";
@@ -609,6 +610,10 @@ int main() {
 				
 				EditHargaProduk(cari, harga); 
 			}
+			else {
+				cout<<"Pilihan Menu edit tidak ada"<<endl;
+				cout<<endl;
+				goto MenuEdit;
 		}else if(pilih == 5){
 			TambahDiskon();
 		}else if(pilih == 6){
