@@ -614,6 +614,7 @@ int main() {
 				cout<<"Pilihan Menu edit tidak ada"<<endl;
 				cout<<endl;
 				goto MenuEdit;
+			}
 		}else if(pilih == 5){
 			TambahDiskon();
 		}else if(pilih == 6){
