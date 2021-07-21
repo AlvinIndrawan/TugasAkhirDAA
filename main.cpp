@@ -1,6 +1,11 @@
 #include <iostream>
 #include <conio.h>
 #include <ctime>
+#include <string>
+#include <sstream>
+#include <fstream>
+#include <windows.h>
+#include <mmsystem.h>
 
 using namespace std;
 
@@ -34,6 +39,16 @@ struct diskon{
 };
 diskon *newDiskon, *headDiskon=NULL, *tailDiskon=NULL, *tempDiskon, *tempDiskon2;
 
+int num_nota = 0;
+
+//CONVERT INT TO STRING
+template <typename T>
+string NumberToString ( T Number )
+  {
+     ostringstream ss;
+     ss << Number;
+     return ss.str();
+  }
 
 //FUNGSI INPUT PRODUK
 int InputProduk(){
@@ -200,26 +215,31 @@ int TambahDiskon () {
 int CekDiskon(int total){
 	int diskon;
 	
-	tempDiskon = headDiskon;
-	tempDiskon2 = tempDiskon->next;
-	
-	do{
-		if(total >= tempDiskon->minimum_pembelian && total < tempDiskon2->minimum_pembelian){
+	if(headDiskon == NULL){
+		return 0;
+	}else{
+		tempDiskon = headDiskon;
+		tempDiskon2 = tempDiskon->next;
+		
+		do{
+			if(total >= tempDiskon->minimum_pembelian && total < tempDiskon2->minimum_pembelian){
+				diskon = tempDiskon->potongan * total;
+				return diskon;
+			}
+			else if(tempDiskon->minimum_pembelian > total){
+				return -1;
+			}
+			tempDiskon = tempDiskon->next;
+			tempDiskon2 = tempDiskon2->next;
+		} while(tempDiskon != NULL && tempDiskon2 != NULL);
+		
+		if(tempDiskon2 == NULL){
 			diskon = tempDiskon->potongan * total;
 			return diskon;
 		}
-		else if(tempDiskon->minimum_pembelian > total){
-			return -1;
-		}
-		tempDiskon = tempDiskon->next;
-		tempDiskon2 = tempDiskon2->next;
-	} while(tempDiskon != NULL && tempDiskon2 != NULL);
-	
-	if(tempDiskon2 == NULL){
-		diskon = tempDiskon->potongan * total;
-		return diskon;
+		return -1;
 	}
-	return -1;
+
 }
 
 
@@ -230,7 +250,7 @@ void Notifikasi(){
 	int n = 0;
 	
 	if(head == NULL){
-		cout<<"Data masih kosong";
+		cout<<"Data masih kosong"<<endl<<endl;
 	}else{
 		temp = head;
 		do{
@@ -343,8 +363,11 @@ int TambahCart(string produk[], int qty[], int harga[], int harga_produk[], int 
 
 // FUNGSI UNTUK CETAK NOTA
 int Nota(int bayar, int kembalian, float diskon, int total){
+	string namafile;
 	time_t curr_time;
 	curr_time = time(NULL);
+	
+	num_nota++;
 
 	char *tanggal = ctime(&curr_time);
 
@@ -356,6 +379,7 @@ int Nota(int bayar, int kembalian, float diskon, int total){
 	cout<< "                                NOTA TRANSAKSI TOKO CYAND                        "<<endl;
 	cout<< " ================================================================================================== "<<endl;
 	cout<<"\tNama Produk \t\t Jumlah \t\t Harga Satuan \t\t Total"<<endl;
+	cout << "---------------------------------------------------------------------------------------------"<<endl<<endl;
 	
 	for(int i=0; i<tempCart->jumlahproduk; i++){
 		cout << "\t"<<tempCart->nama_produkcart[i]<<"\t\t "<<tempCart->qty_produkcart[i]<<"\t\t\t "<<tempCart->harga_produkcart[i]<<"\t\t\t "<<tempCart->totalharga_pcscart[i]<<endl;
@@ -363,7 +387,7 @@ int Nota(int bayar, int kembalian, float diskon, int total){
 	}
 	cout << "Total Pembelian Produk   : " << tempCart->total << endl;
 	
-	if(diskon==-1){
+	if(diskon == -1 || diskon == 0){
 		cout << "Diskon Pembelian         : tidak ada" << endl;
 	} else{
 		cout << "Diskon Pembelian         : " << tempDiskon->potongan_persen << "%" << endl;
@@ -372,6 +396,40 @@ int Nota(int bayar, int kembalian, float diskon, int total){
 	cout << "Total Pembelian Akhir    : " << total << endl;
 	cout << "Jumlah uang yang dibayar : " << bayar << endl;
 	cout << "Kembalian                : " << kembalian << endl;
+	
+	
+	//CREATE TEXT FILE
+	namafile = "nota"+ NumberToString(num_nota) + ".txt";
+	ofstream file(namafile.c_str());
+	if(file.is_open()){
+		
+		file << "Tanggal : " << tanggal << endl;
+		file<< " ================================================================================================== "<<endl;
+		file<< "                                NOTA TRANSAKSI TOKO CYAND                        "<<endl;
+		file<< " ================================================================================================== "<<endl;
+		file<<"\tNama Produk \t\t Jumlah \t\t Harga Satuan \t\t Total"<<endl;
+		file << "---------------------------------------------------------------------------------------------"<<endl<<endl;
+		
+		for(int i=0; i<tempCart->jumlahproduk; i++){
+			file << "\t"<<tempCart->nama_produkcart[i]<<"\t\t "<<tempCart->qty_produkcart[i]<<"\t\t\t "<<tempCart->harga_produkcart[i]<<"\t\t\t "<<tempCart->totalharga_pcscart[i]<<endl;
+			file << "---------------------------------------------------------------------------------------------"<<endl<<endl;
+		}
+		file << "Total Pembelian Produk   : " << tempCart->total << endl;
+		
+		if(diskon==-1 || diskon == 0){
+			file << "Diskon Pembelian         : tidak ada" << endl;
+		} else{
+			file << "Diskon Pembelian         : " << tempDiskon->potongan_persen << "%" << endl;
+		}
+		
+		file << "Total Pembelian Akhir    : " << total << endl;
+		file << "Jumlah uang yang dibayar : " << bayar << endl;
+		file << "Kembalian                : " << kembalian << endl;
+	
+		file.close();
+	}
+	
+	ShellExecute(NULL, "open", namafile.c_str(), NULL, NULL, SW_NORMAL);
 
 	cout << endl;
 }
@@ -432,7 +490,10 @@ int Transaksi(){
 	
 	diskon = CekDiskon(total);
 	
-	if(diskon==-1){
+	if(diskon == 0){
+		TambahCart(nama_produk, qty_produk, harga_satuan_produk, harga_produk, jumlah_produk,total, total);
+	}
+	else if(diskon==-1){
 		cout << "Diskon pembelian               : Maaf, tidak mencapai minimal pembelian"<<endl;
 		TambahCart(nama_produk, qty_produk, harga_satuan_produk, harga_produk, jumlah_produk,total, total);
 	}else{
@@ -532,7 +593,7 @@ int ReportData () {
 }
 
 int main() {
-	
+	system("color b0");
 	int pilihan, pilih, pilih_edit;
 	string produk_edit, cari, nama;
 	int stok_tambah, harga;
